@@ -1,0 +1,11 @@
+---
+applications:
+- name: ccmui
+  memory: 384M
+  instances: 1
+  host: ccmui
+  path: ./target/CCMUI-0.0.1-SNAPSHOT.jar
+  services:
+   - SufRedis
+  env:
+    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom

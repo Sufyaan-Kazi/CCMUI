@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Your Statements</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<p th:text="'Hello, ' + ${contact.first_name} + ' ' + ${contact.last_name} + '!'" />
+	<table>
+		<thead>
+			<tr>
+				<td>Account Type</td>
+				<td>Balance</td>
+			</tr>
+		</thead>
+		<tr>
+			<td><p th:text="${account.acctype}" /></td>
+			<td><p th:text="${account.current_balance}" /></td>
+		</tr>
+	</table>
+	<p
+		th:text="'You have [' + ${statementcount} + '] statements available for viewing'" />
+	<p>&nbsp;</p>
+	<form action="#" th:action="@{/getTransactionsForStatement}"
+		th:object="${statement}" method="post">
+		<table>
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+					<th>Year</th>
+					<th>Month</th>
+					<th>Opening Balance</th>
+					<th>Closing Balance</th>
+					<th>Min. Payment</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td>
+									<div th:include="StatementData::statement_row"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="Submit" /> <input
+						type="reset" value="Reset" /></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</body>
+</html>

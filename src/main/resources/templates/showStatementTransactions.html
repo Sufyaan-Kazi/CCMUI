@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>The Detail</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>Statement Transactions</h1>
+	<p th:field="'Statement :' + ${statement.month} +'/' +${statement.year}" />
+	<table>
+		<thead>
+			<tr>
+				<td>Date</td>
+				<td>Amount</td>
+				<td>Description</td>
+				<td>Category</td>
+			</tr>
+		</thead>
+		<tr th:each="transaction : ${transactions}">
+			<!--  <td th:text="${transaction.acc_id}">AccNo</td> -->
+			<!--  <td th:text="${transaction.statement_id}">StatementNo</td> -->
+			<!--  <td th:text="${transaction.tx_id}">TransactionNo</td> -->
+			<td th:text="${transaction.tx_date}">Date</td>
+			<td th:text="${transaction.amount}">Amount</td>
+			<td th:text="${transaction.description}">Description</td>
+			<td th:text="${transaction.category}">Category</td>
+		</tr>
+	</table>
+</body>
+</html>

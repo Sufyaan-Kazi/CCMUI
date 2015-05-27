@@ -1,0 +1,11 @@
+spring:
+  profiles.active: local
+
+---
+spring:
+  profiles: local
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost/ccmdemo2
+    username: root
+    password: 

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Suf Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <p th:text="'Hello, ' + ${contact.first_name} + '!'" />
+    <p th:text="'You have [' + ${statementcount} + '] statements available for viewing'" />
+    <p>&nbsp;</p>
+    <form action="#" th:action="@{/getTransactionsForStatement}" th:object="${statement}" method="post">
+    <table>
+    	<thead>
+    		<tr>
+    			<th>&nbsp;</th>
+    			<th>&nbsp;</th>
+    			<th>Year</th>
+    			<th>Month</th>
+    			<th>Opening Balance</th>
+    			<th>Closing Balance</th>
+    			<th>Min. Payment</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		<tr th:each="statement : ${statements}">
+    			<td><input type="checkbox" /></td>
+    			<td><input type="hidden" th:text="${statement.statement_id}" />&nbsp;</td>
+    			<td th:text="${statement.year}">Year</td>
+    			<td th:text="${statement.month}">Month</td>
+    			<td th:text="${#numbers.formatDecimal(statement.opening_balance,1,2)}">Opening Bal</td>
+    			<td th:text="${statement.closing_balance}">Closing Bal</td>
+    			<td th:text="${statement.min_payment}">Min Payment</td>
+    		</tr>
+    		<tr>
+    			<td><input type="submit" value="Submit" /></td>
+    		</tr>
+    	</tbody>
+    </table>
+    </form>
+</body>
+</html>

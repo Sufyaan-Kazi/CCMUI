@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Suf Content</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<div th:fragment="statement_row">
+		<table>
+			<tr>
+				<!-- 
+				<td><input type="checkbox" name="ID" th:value="${statementId}" />&nbsp;</td>
+				<td th:text="${statement.statementId}">ID</td>
+				<td th:text="${statement.year}">Year</td>
+				<td th:text="${statement.month}">Month</td>
+				<td th:text="${#numbers.formatDecimal(statement.opening_balance,1,2)}">Opening Bal</td>
+				<td th:text="${statement.closing_balance}">Closing Bal</td>
+				<td th:text="${statement.min_payment}">Min Payment</td>
+			-->
+				<td>
+				<select id="statementList" name="statementId">
+						<option th:each="statement : ${statements}"
+							th:value="${statement.statementId}"
+							th:text="${statement.year} + '-' + ${statement.month}">Year and Month</option>
+				</select>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
