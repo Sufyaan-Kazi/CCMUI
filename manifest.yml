@@ -7,5 +7,6 @@ applications:
   path: ./target/CCMUI-0.0.1-SNAPSHOT.jar
   services:
    - SufRedis
+   - eureka-service
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom

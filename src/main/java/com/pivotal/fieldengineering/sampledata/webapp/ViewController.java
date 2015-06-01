@@ -21,7 +21,6 @@ import com.pivotal.fieldengineering.sampledata.beans.Statement;
 import com.pivotal.fieldengineering.sampledata.beans.Transaction;
 import com.pivotal.fieldengineering.sampledata.data.RedisDAOImpl;
 import com.pivotal.fieldengineering.sampledata.utils.Logger;
-import com.pivotal.fieldengineering.sampledata.utils.StaticData;
 
 @Controller
 // @SessionAttributes("acc")
@@ -31,7 +30,10 @@ public class ViewController {
 	
 	@Autowired
 	private Environment env;
-	private String ccmdsService = null;
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	private static final String SERVICE_CCMDS = "CCMDS";
 
 	public ViewController() {
 		super();
@@ -44,9 +46,6 @@ public class ViewController {
 		Logger.INSTANCE.log("Forwarding to Thymeleaf!");
 		model.addAttribute("account", new Account());
 		
-		if(ccmdsService == null){
-			ccmdsService = env.getProperty("vcap.services.ccmds-service.credentials.uri");
-		}
 		return "login";
 	}
 
@@ -57,24 +56,24 @@ public class ViewController {
 		Logger.INSTANCE.log("Fetching Data for: " + acc.getId());
 		Logger.INSTANCE.log(model.toString());
 
-		Logger.INSTANCE.log("About to call Spring Rest Service: " + StaticData.INSTANCE.CF_DOMAIN);
-		RestTemplate restTemplate = new RestTemplate();
-		Logger.INSTANCE.log(System.getenv("VCAP_SERVICES"));
-		Logger.INSTANCE.log("Stuff: " + ccmdsService);
-		acc = restTemplate.getForObject(ccmdsService + "/getAccount?accId=" + acc.getId(), Account.class);
+		//acc = restTemplate.getForObject(ccmdsService + "/getAccount?accId=" + acc.getId(), Account.class);
+		//amend this to get the service name from the config name if you prefer
+		acc = restTemplate.getForObject("http://" + SERVICE_CCMDS + "/getAccount?accId=" + acc.getId(), Account.class);
+		
+		
 		Logger.INSTANCE.log("Called Spring Rest Service: " + acc.toString());
 		// acc = accDao.getAccountDetails(acc.getId());
 		model.addAttribute("account", acc);
 
 		// Logger.INSTANCE.log(StaticData.INSTANCE.env.getProperty("CF_DOMAIN"));
-		Contact contRecord = restTemplate.getForObject(ccmdsService + "/getContactForAccount?accId=" + acc.getId(), Contact.class);
+		Contact contRecord = restTemplate.getForObject("http://" + SERVICE_CCMDS + "/getContactForAccount?accId=" + acc.getId(), Contact.class);
 		// Logger.INSTANCE.log("Called Spring Rest Service: " + accDetails);
 		Logger.INSTANCE.log("Called Spring Rest Service: " + contRecord.getFirst_name() + " " + contRecord.getLast_name());
 
 		// Contact contRecord = accDao.getContactForAccount(acc.getId());
 		model.addAttribute("contact", contRecord);
 
-		Statement[] forNow = restTemplate.getForObject(ccmdsService + "/getStatementsForAccount?accId=" + acc.getId(), Statement[].class);
+		Statement[] forNow = restTemplate.getForObject("http://" + SERVICE_CCMDS +  "/getStatementsForAccount?accId=" + acc.getId(), Statement[].class);
 		List<Statement> stmnts = Arrays.asList(forNow);
 
 		// List<Statement> stmnts = accDao.getStatementsForAccount(acc.getId());
@@ -94,15 +93,15 @@ public class ViewController {
 	public String getTransactionsForStatement(@ModelAttribute Statement statement, Model model, HttpServletRequest request, HttpSession session) {
 
 		int accNo = Integer.parseInt(redisDAO.getValue("AccountNo"));
-		RestTemplate restTemplate = new RestTemplate();
 
-		// Change this to read/write JSON from Redis
-		Statement[] forNow = restTemplate.getForObject(ccmdsService + "/getStatementsForAccount?accId=" + accNo, Statement[].class);
-		List<Statement> stmnts = Arrays.asList(forNow);
-		model.addAttribute("statement", stmnts.get(0));
+//		Logger.INSTANCE.log("Fetching Statements");
+//		// Change this to read/write JSON from Redis
+//		Statement[] forNow = restTemplate.getForObject("http://" + SERVICE_CCMDS +  "/getStatementsForAccount?accId=" + accNo, Statement[].class);
+//		List<Statement> stmnts = Arrays.asList(forNow);
+//		model.addAttribute("statement", stmnts.get(0));
 
 		Logger.INSTANCE.log("Fetching transactions ......");
-		Transaction[] forNowT = restTemplate.getForObject(ccmdsService + "/getTransactionsForStatement?accId=" + accNo + "&statementId=" + statement.getStatementId(),
+		Transaction[] forNowT = restTemplate.getForObject("http://" + SERVICE_CCMDS +  "/getTransactionsForStatement?accId=" + accNo + "&statementId=" + statement.getStatementId(),
 				Transaction[].class);
 		List<Transaction> transactions = Arrays.asList(forNowT);
 		Logger.INSTANCE.log("\t" + transactions);
