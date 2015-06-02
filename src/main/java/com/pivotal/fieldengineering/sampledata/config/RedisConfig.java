@@ -1,6 +1,5 @@
 package com.pivotal.fieldengineering.sampledata.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,42 +10,20 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.pivotal.fieldengineering.sampledata.utils.Logger;
+
 @Configuration
-@ConfigurationProperties(prefix = "spring.redis")
+@ConfigurationProperties(prefix="spring.redis")
 @Profile("local")
 public class RedisConfig {
 
-	@Value("${host:Hello}") //Not sure why this isn't working?
 	private String redisHostName;
-	
-	@Value("${port:123}")
 	private int redisPort;
 
 	public RedisConfig() {
 		super();
 	}
-
-	@Bean
-	public RedisConnectionFactory jedisConnectionFactory() {
-		System.out.println("Creating Jedis Factory: " + redisHostName + ":" + redisPort);
-
-		JedisConnectionFactory factory = new JedisConnectionFactory();
-		System.out.println("Conected to Redis: " + factory.getHostName() + ":" + factory.getPort());
-		// factory.setHostName(redisHostName);
-		// factory.setPort(redisPort);
-		return factory;
-	}
-
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate() {
-		final RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
-		template.setConnectionFactory(jedisConnectionFactory());
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setHashValueSerializer(new GenericToStringSerializer<Object>(Object.class));
-		template.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
-		return template;
-	}
-
+	
 	public String getRedisHostName() {
 		return redisHostName;
 	}
@@ -61,5 +38,26 @@ public class RedisConfig {
 
 	public void setRedisPort(int redisPort) {
 		this.redisPort = redisPort;
+	}
+
+	@Bean
+	public RedisConnectionFactory jedisConnectionFactory() {
+		//Logger.INSTANCE.log("Creating Jedis Factory: " + this.redisHostName + ":" + this.redisPort);
+
+		JedisConnectionFactory factory = new JedisConnectionFactory();
+		factory.setHostName(redisHostName);
+		factory.setPort(redisPort);
+		Logger.INSTANCE.log("Conected to Redis: " + factory.getHostName() + ":" + factory.getPort());
+		return factory;
+	}
+
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate() {
+		final RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+		template.setConnectionFactory(jedisConnectionFactory());
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setHashValueSerializer(new GenericToStringSerializer<Object>(Object.class));
+		template.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
+		return template;
 	}
 }
